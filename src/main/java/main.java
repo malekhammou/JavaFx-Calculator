@@ -6,23 +6,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.beans.EventHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author Malek Hammou
- */
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
+import java.lang.ArithmeticException;
 public class main  {
 
-    private static String Operation;
+    private static String Operation="";
+    private static int Operand_1=0;
+    private static int Operand_2=0;
+
     public static void main(String[] args) {
         String operator="";
         /*NEW FRAME*/
@@ -39,7 +38,6 @@ public class main  {
             JButton button=new JButton(""+i);
             button.setForeground(Color.blue);
             button.addActionListener(actionEvent ->  {
-                
                 ioField.setText(ioField.getText()+((JButton)actionEvent.getSource()).getText());
 });
             digitsPanel.add(button);
@@ -48,15 +46,30 @@ public class main  {
         
         /*ADD ZERO BUTTON*/
         JButton zeroButton=new JButton(""+0);
+        zeroButton.addActionListener(actionEvent ->  {
+                ioField.setText(ioField.getText()+((JButton)actionEvent.getSource()).getText());
+});
+        
   
         zeroButton.setForeground(Color.blue);
         digitsPanel.add(zeroButton);
         /*ADD SIGN BUTTON*/
         JButton signButton=new JButton("+/-");
         signButton.addActionListener(actionEvent ->  {
+            if(Operation.equalsIgnoreCase("")){
             int nb = Integer.parseInt(ioField.getText().toString());
-            nb=-nb;   
-                ioField.setText(String.valueOf(nb));
+            nb=-nb;
+            ioField.setText(String.valueOf(nb));
+            }
+            else{
+                String[] split = ioField.getText().toString().replace("(","").replace(")","").split("\\"+Operation);
+                int scnd = Integer.parseInt(split[split.length-1]);
+                scnd=-scnd;
+                ioField.setText(split[0]+Operation+"("+String.valueOf(scnd)+")");
+
+            }
+            
+                
 });
         signButton.setForeground(Color.blue);
         digitsPanel.add(signButton);
@@ -64,6 +77,9 @@ public class main  {
         JButton clearAllButton=new JButton("CLEAR");
         clearAllButton.setForeground(Color.PINK);
         clearAllButton.addActionListener(actionEvent ->  {
+                Operand_1=0;
+                Operand_2=0;
+                Operation="";
                 ioField.setText("");
 });
         digitsPanel.add(clearAllButton);
@@ -74,26 +90,37 @@ public class main  {
         /*ADDITION*/
         JButton additionButton=new JButton("+");
         additionButton.addActionListener(actionEvent ->  {
-            Operation="-";
+            if(Operation.equalsIgnoreCase("")){
+               Operation="+";
             ioField.setText(ioField.getText()+"+");
+            }
 });
         /*SUBSTRACTION*/
         JButton substractionButton=new JButton("-");
         substractionButton.addActionListener(actionEvent ->  {
-            Operation="-";
+            if(Operation.equalsIgnoreCase("")){
+               Operation="-";
             ioField.setText(ioField.getText()+"-");
+            }
+            
+
 });
         /* DIVISION*/
         JButton divisionButton=new JButton("/");
         divisionButton.addActionListener(actionEvent ->  {
-            Operation="/";
+            if(Operation.equalsIgnoreCase("")){
+               Operation="/";
             ioField.setText(ioField.getText()+"/");
+            }
+
 });
         /*MULTIPLICATION*/
         JButton multiplicationButton=new JButton("*");
         multiplicationButton.addActionListener(actionEvent ->  {
-            Operation="*";
+           if(Operation.equalsIgnoreCase("")){
+               Operation="*";
             ioField.setText(ioField.getText()+"*");
+            }
 });
         operationsPanel.add(additionButton);
         operationsPanel.add(substractionButton);
@@ -103,9 +130,23 @@ public class main  {
         divisionButton.setForeground(Color.red);
         substractionButton.setForeground(Color.red);
         multiplicationButton.setForeground(Color.red);
-           
+        /*EVALUATION BUTTON*/
+        JButton enterButton=new JButton("Enter");
         mainFrame.add(operationsPanel,BorderLayout.EAST);
-        mainFrame.add(new JButton("ENTER"),BorderLayout.SOUTH);
+        mainFrame.add(enterButton,BorderLayout.SOUTH);
+        enterButton.addActionListener(actionEvent ->  {
+        ScriptEngineManager mgr = new ScriptEngineManager();
+        ScriptEngine engine = mgr.getEngineByName("JavaScript");
+        String strToEval=ioField.getText().toString();
+            try {
+                ioField.setText(String.valueOf(engine.eval(strToEval)));
+            } catch (ScriptException ex) {
+                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+        
+           
+});
+        
         mainFrame.setVisible(true);
 
    
