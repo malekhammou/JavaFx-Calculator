@@ -29,7 +29,7 @@ public class main  {
         mainFrame.setTitle("CALCULATOR");
         mainFrame.setSize(300,200);
         mainFrame.setLayout(new BorderLayout());
-        /*USED FOR DISPLAY*/
+        /* THIS FIELD IS USED FOR DISPLAY*/
         JTextField ioField=new JTextField();
         mainFrame.add(ioField,BorderLayout.NORTH);
         JPanel digitsPanel=new JPanel();
@@ -37,6 +37,7 @@ public class main  {
         for (int i = 1; i < 10; i++) {
             JButton button=new JButton(""+i);
             button.setForeground(Color.blue);
+            /*ACTION LISTENER FOR NUMERICAL BUTTONS*/
             button.addActionListener(actionEvent ->  {
                 ioField.setText(ioField.getText()+((JButton)actionEvent.getSource()).getText());
 });
@@ -49,11 +50,9 @@ public class main  {
         zeroButton.addActionListener(actionEvent ->  {
                 ioField.setText(ioField.getText()+((JButton)actionEvent.getSource()).getText());
 });
-        
-  
         zeroButton.setForeground(Color.blue);
         digitsPanel.add(zeroButton);
-        /*ADD SIGN BUTTON*/
+        /*ADD SIGN BUTTON, THIS BUTTON INVERTS THE SIGN OF THE ENTERED OPERATOR.*/
         JButton signButton=new JButton("+/-");
         signButton.addActionListener(actionEvent ->  {
             if(Operation.equalsIgnoreCase("")){
@@ -62,13 +61,21 @@ public class main  {
             ioField.setText(String.valueOf(nb));
             }
             else{
-                String[] split = ioField.getText().toString().replace("(","").replace(")","").split("\\"+Operation);
+                String noParentheses=ioField.getText().toString().replace("(","").replace(")","");
+                String[] split = noParentheses.split("\\"+Operation);
+
+                
                 int scnd = Integer.parseInt(split[split.length-1]);
                 scnd=-scnd;
-                ioField.setText(split[0]+Operation+"("+String.valueOf(scnd)+")");
+                if("-".equals(noParentheses.split("")[0])&&Operation=="-"){
+                     ioField.setText("(-"+split[1]+")"+Operation+"("+String.valueOf(scnd)+")");
+                }
+                else{
+             scnd=-scnd;
+             ioField.setText("("+split[0]+")"+Operation+"("+String.valueOf(scnd)+")");
 
+                }
             }
-            
                 
 });
         signButton.setForeground(Color.blue);
@@ -77,8 +84,6 @@ public class main  {
         JButton clearAllButton=new JButton("CLEAR");
         clearAllButton.setForeground(Color.PINK);
         clearAllButton.addActionListener(actionEvent ->  {
-                Operand_1=0;
-                Operand_2=0;
                 Operation="";
                 ioField.setText("");
 });
@@ -92,7 +97,7 @@ public class main  {
         additionButton.addActionListener(actionEvent ->  {
             if(Operation.equalsIgnoreCase("")){
                Operation="+";
-            ioField.setText(ioField.getText()+"+");
+            ioField.setText("("+ioField.getText()+")"+"+");
             }
 });
         /*SUBSTRACTION*/
@@ -100,7 +105,7 @@ public class main  {
         substractionButton.addActionListener(actionEvent ->  {
             if(Operation.equalsIgnoreCase("")){
                Operation="-";
-            ioField.setText(ioField.getText()+"-");
+            ioField.setText("("+ioField.getText()+")"+"-");
             }
             
 
@@ -110,7 +115,7 @@ public class main  {
         divisionButton.addActionListener(actionEvent ->  {
             if(Operation.equalsIgnoreCase("")){
                Operation="/";
-            ioField.setText(ioField.getText()+"/");
+            ioField.setText("("+ioField.getText()+")"+"/");
             }
 
 });
@@ -119,7 +124,7 @@ public class main  {
         multiplicationButton.addActionListener(actionEvent ->  {
            if(Operation.equalsIgnoreCase("")){
                Operation="*";
-            ioField.setText(ioField.getText()+"*");
+            ioField.setText("("+ioField.getText()+")"+"*");
             }
 });
         operationsPanel.add(additionButton);
