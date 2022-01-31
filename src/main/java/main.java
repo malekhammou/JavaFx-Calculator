@@ -68,10 +68,12 @@ public class main  {
                 int scnd = Integer.parseInt(split[split.length-1]);
                 scnd=-scnd;
                 if("-".equals(noParentheses.split("")[0])&&Operation=="-"){
+                    
+                    System.out.println("HERE");
                      ioField.setText("(-"+split[1]+")"+Operation+"("+String.valueOf(scnd)+")");
+
                 }
                 else{
-             scnd=-scnd;
              ioField.setText("("+split[0]+")"+Operation+"("+String.valueOf(scnd)+")");
 
                 }
